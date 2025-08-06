@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Recipe Generator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Apply Inter font to the whole document */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar styles */
+        .recipe-card::-webkit-scrollbar {
+            width: 8px;
+        }
+        .recipe-card::-webkit-scrollbar-track {
+            background: #2d3748;
+        }
+        .recipe-card::-webkit-scrollbar-thumb {
+            background-color: #4a5568;
+            border-radius: 20px;
+            border: 2px solid #2d3748;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white antialiased">
+
+    <div class="container mx-auto px-4 py-8 md:py-16">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500">AI Recipe Generator</h1>
+            <p class="text-lg text-gray-400">What to cook with what's in your fridge?</p>
+        </header>
+
+        <main class="max-w-2xl mx-auto">
+            <!-- Ingredient Input Form -->
+            <form id="recipe-form" class="bg-gray-800 p-6 rounded-2xl shadow-lg">
+                <div class="mb-4">
+                    <label for="ingredients" class="block mb-2 text-sm font-medium text-gray-300">Enter your ingredients, separated by commas:</label>
+                    <textarea id="ingredients" rows="4" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200 text-white placeholder-gray-400" placeholder="e.g., chicken breast, potatoes, tomatoes, onion, sour cream..."></textarea>
+                </div>
+                <div class="mb-6">
+                    <label for="recipe-count" class="block mb-2 text-sm font-medium text-gray-300">How many recipes to generate?</label>
+                    <select id="recipe-count" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200 text-white">
+                        <option value="1">1 recipe</option>
+                        <option value="2" selected>2 recipes</option>
+                        <option value="3">3 recipes</option>
+                    </select>
+                </div>
+                <button type="submit" id="generate-btn" class="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
+                    <svg id="button-icon" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                    <span id="button-text">Find Recipes</span>
+                </button>
+            </form>
+
+            <!-- AdSense Placeholder -->
+            <div id="adsense-placeholder" class="my-8 text-center text-gray-500 bg-gray-800/50 p-4 rounded-lg">
+                <p>[ Your Ad Block Will Appear Here ]</p>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div id="loader" class="hidden text-center py-10">
+                <div role="status" class="flex justify-center items-center flex-col">
+                    <svg aria-hidden="true" class="w-10 h-10 text-gray-600 animate-spin fill-green-500" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                    </svg>
+                    <p class="mt-4 text-gray-400">AI is crafting your recipes...</p>
+                </div>
+            </div>
+
+            <!-- Results Area -->
+            <div id="results" class="mt-10 space-y-6"></div>
+
+            <!-- Error Modal -->
+            <div id="error-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+                <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-11/12 max-w-md text-center border border-red-500">
+                    <h3 class="text-xl font-bold text-red-400 mb-4">An Error Occurred</h3>
+                    <p id="error-message" class="text-gray-300 mb-6">Failed to generate recipes. Please try again.</p>
+                    <button id="close-modal-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg transition-colors">Close</button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Get DOM element references
+        const recipeForm = document.getElementById('recipe-form');
+        const ingredientsInput = document.getElementById('ingredients');
+        const recipeCountSelect = document.getElementById('recipe-count');
+        const generateBtn = document.getElementById('generate-btn');
+        const buttonText = document.getElementById('button-text');
+        const buttonIcon = document.getElementById('button-icon');
+        const loader = document.getElementById('loader');
+        const resultsDiv = document.getElementById('results');
+        const errorModal = document.getElementById('error-modal');
+        const errorMessage = document.getElementById('error-message');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+
+        // --- Event Handlers ---
+
+        // Handle form submission
+        recipeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const ingredients = ingredientsInput.value.trim();
+            if (!ingredients) {
+                showError('Please enter at least one ingredient.');
+                return;
+            }
+            
+            const recipeCount = recipeCountSelect.value;
+            await generateRecipes(ingredients, recipeCount);
+        });
+
+        // Close the error modal
+        closeModalBtn.addEventListener('click', () => {
+            errorModal.classList.add('hidden');
+        });
+
+        // --- API Interaction Functions ---
+
+        /**
+         * Generates recipes using the Gemini API
+         * @param {string} ingredients - The list of ingredients from the user
+         * @param {string} recipeCount - The number of recipes requested
+         */
+        async function generateRecipes(ingredients, recipeCount) {
+            setLoadingState(true);
+            resultsDiv.innerHTML = '';
+
+            // The prompt for the AI model
+            const prompt = `
+                Create ${recipeCount} different recipes from the following ingredients: ${ingredients}.
+                The recipes should be simple, easy to follow, and have step-by-step instructions.
+                For each recipe, specify the approximate cooking time.
+                Return the response as a JSON array.
+                Each object in the array must match the schema.
+            `;
+            
+            // The schema for the structured JSON response
+            const schema = {
+                type: "ARRAY",
+                items: {
+                    type: "OBJECT",
+                    properties: {
+                        name: { type: "STRING", description: "The name of the recipe" },
+                        description: { type: "STRING", description: "A short, appetizing description of the dish" },
+                        time: { type: "STRING", description: "Approximate cooking time (e.g., '30 minutes')" },
+                        ingredients: {
+                            type: "ARRAY",
+                            description: "A list of necessary ingredients with quantities/proportions",
+                            items: { type: "STRING" }
+                        },
+                        instructions: {
+                            type: "ARRAY",
+                            description: "Step-by-step cooking instructions",
+                            items: { type: "STRING" }
+                        }
+                    },
+                    required: ["name", "description", "time", "ingredients", "instructions"]
+                }
+            };
+
+            try {
+                const responseText = await callGeminiAPI(prompt, schema);
+                const recipes = JSON.parse(responseText);
+                displayRecipes(recipes);
+            } catch (error) {
+                console.error('Error generating recipes:', error);
+                showError(error.message || 'Failed to get a response from the AI. Try changing your query or try again later.');
+            } finally {
+                setLoadingState(false);
+            }
+        }
+        
+        /**
+         * Calls the Gemini API with exponential backoff for retries
+         * @param {string} prompt - The prompt for the model
+         * @param {object} schema - The JSON schema for the response
+         * @returns {Promise<string>} - The response text from the API
+         */
+        async function callGeminiAPI(prompt, schema) {
+            const apiKey = ""; // The API key will be automatically inserted by the runtime environment
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: schema,
+                    temperature: 0.7, // Add a bit of creativity
+                }
+            };
+            
+            let attempts = 0;
+            const maxAttempts = 3;
+            while (attempts < maxAttempts) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        return result.candidates[0].content.parts[0].text;
+                    } else {
+                        // If the response is successful but empty, treat it as a generation error
+                        throw new Error('AI returned an empty or invalid response.');
+                    }
+                } catch (error) {
+                    attempts++;
+                    if (attempts >= maxAttempts) {
+                        throw error; // Throw the error after all retries have failed
+                    }
+                    const delay = Math.pow(2, attempts) * 1000; // 2s, 4s
+                    console.log(`Attempt ${attempts} failed. Retrying in ${delay}ms...`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+
+
+        // --- UI Display Functions ---
+
+        /**
+         * Displays the generated recipes on the page
+         * @param {Array<object>} recipes - An array of recipe objects
+         */
+        function displayRecipes(recipes) {
+            if (!recipes || recipes.length === 0) {
+                resultsDiv.innerHTML = `<p class="text-center text-gray-400">Sorry, we couldn't come up with any recipes from these ingredients. Try changing the set.</p>`;
+                return;
+            }
+            
+            recipes.forEach(recipe => {
+                const recipeCard = document.createElement('div');
+                recipeCard.className = 'bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700 recipe-card transform transition-all duration-300 hover:border-green-500 hover:scale-105';
+                
+                recipeCard.innerHTML = `
+                    <h3 class="text-2xl font-bold text-green-400 mb-2">${recipe.name}</h3>
+                    <p class="text-gray-400 mb-4">${recipe.description}</p>
+                    <div class="flex items-center text-sm text-gray-500 mb-6">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>${recipe.time}</span>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 text-gray-200">Ingredients:</h4>
+                            <ul class="list-disc list-inside space-y-1 text-gray-300">
+                                ${recipe.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 text-gray-200">Instructions:</h4>
+                            <ol class="list-decimal list-inside space-y-2 text-gray-300">
+                                ${recipe.instructions.map(step => `<li>${step}</li>`).join('')}
+                            </ol>
+                        </div>
+                    </div>
+                `;
+                resultsDiv.appendChild(recipeCard);
+            });
+        }
+
+        /**
+         * Manages the loading state of the UI (button and loader)
+         * @param {boolean} isLoading - The loading state flag
+         */
+        function setLoadingState(isLoading) {
+            if (isLoading) {
+                loader.classList.remove('hidden');
+                generateBtn.disabled = true;
+                buttonText.textContent = 'Generating...';
+                buttonIcon.classList.add('animate-spin');
+            } else {
+                loader.classList.add('hidden');
+                generateBtn.disabled = false;
+                buttonText.textContent = 'Find Recipes';
+                buttonIcon.classList.remove('animate-spin');
+            }
+        }
+
+        /**
+         * Shows the error modal with a specific message
+         * @param {string} message - The error message to display
+         */
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorModal.classList.remove('hidden');
+        }
+
+    </script>
+</body>
+</html>
