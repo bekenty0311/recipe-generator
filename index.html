@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Recipe Generator</title>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4712394184386891"
-     crossorigin="anonymous"></script>
+    <title>FridgeChef AI Recipe Generator</title>
+
+    <!-- Код Google AdSense для подтверждения сайта -->
+    <!-- Убедитесь, что ваш код AdSense находится здесь -->
+
+    <!-- Код для запроса согласия (если Google его предоставил) -->
+    <!-- Убедитесь, что ваш второй код AdSense находится здесь -->
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Inter Font -->
@@ -13,17 +18,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Apply Inter font to the whole document */
         body {
             font-family: 'Inter', sans-serif;
         }
-        /* Custom scrollbar styles */
-        .recipe-card::-webkit-scrollbar {
-            width: 8px;
-        }
-        .recipe-card::-webkit-scrollbar-track {
-            background: #2d3748;
-        }
+        .recipe-card::-webkit-scrollbar { width: 8px; }
+        .recipe-card::-webkit-scrollbar-track { background: #2d3748; }
         .recipe-card::-webkit-scrollbar-thumb {
             background-color: #4a5568;
             border-radius: 20px;
@@ -33,14 +32,30 @@
 </head>
 <body class="bg-gray-900 text-white antialiased">
 
-    <div class="container mx-auto px-4 py-8 md:py-16">
-        <header class="text-center mb-10">
-            <h1 class="text-4xl md:text-5xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500">AI Recipe Generator</h1>
+    <div class="container mx-auto px-4 py-8 md:py-12">
+        <header class="text-center mb-10 flex flex-col items-center">
+            <!-- НАЧАЛО: НОВЫЙ БЛОК С ЛОГОТИПОМ -->
+            <div class="flex items-center gap-4 mb-4">
+                <svg class="w-16 h-16" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Колпак шеф-повара -->
+                    <path d="M68.75 31.25C68.75 24.1789 63.0711 18.5 56 18.5C53.5341 18.5 51.2184 19.1641 49.25 20.3121C47.2816 19.1641 44.9659 18.5 42.5 18.5C35.4289 18.5 29.75 24.1789 29.75 31.25C29.75 35.8211 32.4189 39.7589 36.25 41.5V44H62.25V41.5C66.0811 39.7589 68.75 35.8211 68.75 31.25Z" fill="#34D399"/>
+                    <!-- Основа холодильника -->
+                    <rect x="25" y="44" width="48.5" height="40" rx="4" fill="#4A5568"/>
+                    <!-- Дверца холодильника -->
+                    <path d="M27 46H71.5V82C71.5 83.1046 70.6046 84 69.5 84H29C27.8954 84 27 83.1046 27 82V46Z" fill="#718096"/>
+                    <!-- Ручка холодильника -->
+                    <rect x="62" y="58" width="4" height="12" rx="2" fill="#4A5568"/>
+                </svg>
+                <h1 class="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500">
+                    FridgeChef
+                </h1>
+            </div>
+            <!-- КОНЕЦ: НОВЫЙ БЛОК С ЛОГОТИПОМ -->
             <p class="text-lg text-gray-400">What to cook with what's in your fridge?</p>
         </header>
 
         <main class="max-w-2xl mx-auto">
-            <!-- Ingredient Input Form -->
+            <!-- Форма для ввода ингредиентов -->
             <form id="recipe-form" class="bg-gray-800 p-6 rounded-2xl shadow-lg">
                 <div class="mb-4">
                     <label for="ingredients" class="block mb-2 text-sm font-medium text-gray-300">Enter your ingredients, separated by commas:</label>
@@ -87,145 +102,146 @@
                     <button id="close-modal-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg transition-colors">Close</button>
                 </div>
             </div>
-
         </main>
     </div>
 
     <script>
-      // Get DOM element references
-const recipeForm = document.getElementById('recipe-form');
-const ingredientsInput = document.getElementById('ingredients');
-const recipeCountSelect = document.getElementById('recipe-count');
-const generateBtn = document.getElementById('generate-btn');
-const buttonText = document.getElementById('button-text');
-const buttonIcon = document.getElementById('button-icon');
-const loader = document.getElementById('loader');
-const resultsDiv = document.getElementById('results');
-const errorModal = document.getElementById('error-modal');
-const errorMessage = document.getElementById('error-message');
-const closeModalBtn = document.getElementById('close-modal-btn');
+    // Весь ваш JavaScript код остается здесь без изменений
+    // ...
+    // Get DOM element references
+    const recipeForm = document.getElementById('recipe-form');
+    const ingredientsInput = document.getElementById('ingredients');
+    const recipeCountSelect = document.getElementById('recipe-count');
+    const generateBtn = document.getElementById('generate-btn');
+    const buttonText = document.getElementById('button-text');
+    const buttonIcon = document.getElementById('button-icon');
+    const loader = document.getElementById('loader');
+    const resultsDiv = document.getElementById('results');
+    const errorModal = document.getElementById('error-modal');
+    const errorMessage = document.getElementById('error-message');
+    const closeModalBtn = document.getElementById('close-modal-btn');
 
-// Handle form submission
-recipeForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const ingredients = ingredientsInput.value.trim();
-    if (!ingredients) {
-        showError('Please enter at least one ingredient.');
-        return;
-    }
-
-    const recipeCount = recipeCountSelect.value;
-    await generateRecipes(ingredients, recipeCount);
-});
-
-// Close the error modal
-closeModalBtn.addEventListener('click', () => {
-    errorModal.classList.add('hidden');
-});
-
-/**
- * Calls our secure serverless function to generate recipes
- * @param {string} ingredients - The list of ingredients from the user
- * @param {string} recipeCount - The number of recipes requested
- */
-async function generateRecipes(ingredients, recipeCount) {
-    setLoadingState(true);
-    resultsDiv.innerHTML = '';
-
-    // URL нашей безопасной функции на Netlify
-    const functionUrl = '/.netlify/functions/generate-recipes';
-
-    try {
-        const response = await fetch(functionUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ ingredients, recipeCount }),
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || `Request failed with status ${response.status}`);
+    // Handle form submission
+    recipeForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const ingredients = ingredientsInput.value.trim();
+        if (!ingredients) {
+            showError('Please enter at least one ingredient.');
+            return;
         }
-
-        const result = await response.json();
-
-        if (result.candidates && result.candidates.length > 0) {
-            const recipes = JSON.parse(result.candidates[0].content.parts[0].text);
-            displayRecipes(recipes);
-        } else {
-            throw new Error('AI returned an empty or invalid response.');
-        }
-
-    } catch (error) {
-        console.error('Error generating recipes:', error);
-        showError(error.message || 'Failed to get a response. Please try again later.');
-    } finally {
-        setLoadingState(false);
-    }
-}
-
-// --- UI Display Functions (these remain the same) ---
-
-function displayRecipes(recipes) {
-    if (!recipes || recipes.length === 0) {
-        resultsDiv.innerHTML = `<p class="text-center text-gray-400">Sorry, we couldn't come up with any recipes from these ingredients. Try changing the set.</p>`;
-        return;
-    }
-
-    recipes.forEach(recipe => {
-        const recipeCard = document.createElement('div');
-        recipeCard.className = 'bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700 recipe-card transform transition-all duration-300 hover:border-green-500 hover:scale-105';
-
-        recipeCard.innerHTML = `
-            <h3 class="text-2xl font-bold text-green-400 mb-2">${recipe.name}</h3>
-            <p class="text-gray-400 mb-4">${recipe.description}</p>
-            <div class="flex items-center text-sm text-gray-500 mb-6">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <span>${recipe.time}</span>
-            </div>
-            <div class="grid md:grid-cols-2 gap-6">
-                <div>
-                    <h4 class="text-lg font-semibold mb-3 text-gray-200">Ingredients:</h4>
-                    <ul class="list-disc list-inside space-y-1 text-gray-300">
-                        ${recipe.ingredients.map(ing => `<li>${ing}</li>`).join('')}
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-3 text-gray-200">Instructions:</h4>
-                    <ol class="list-decimal list-inside space-y-2 text-gray-300">
-                        ${recipe.instructions.map(step => `<li>${step}</li>`).join('')}
-                    </ol>
-                </div>
-            </div>
-        `;
-        resultsDiv.appendChild(recipeCard);
+        
+        const recipeCount = recipeCountSelect.value;
+        await generateRecipes(ingredients, recipeCount);
     });
-}
 
-function setLoadingState(isLoading) {
-    if (isLoading) {
-        loader.classList.remove('hidden');
-        generateBtn.disabled = true;
-        buttonText.textContent = 'Generating...';
-        buttonIcon.classList.add('animate-spin');
-    } else {
-        loader.classList.add('hidden');
-        generateBtn.disabled = false;
-        buttonText.textContent = 'Find Recipes';
-        buttonIcon.classList.remove('animate-spin');
+    // Close the error modal
+    closeModalBtn.addEventListener('click', () => {
+        errorModal.classList.add('hidden');
+    });
+
+    /**
+     * Calls our secure serverless function to generate recipes
+     * @param {string} ingredients - The list of ingredients from the user
+     * @param {string} recipeCount - The number of recipes requested
+     */
+    async function generateRecipes(ingredients, recipeCount) {
+        setLoadingState(true);
+        resultsDiv.innerHTML = '';
+
+        // URL нашей безопасной функции на Netlify
+        const functionUrl = '/.netlify/functions/generate-recipes';
+
+        try {
+            const response = await fetch(functionUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ingredients, recipeCount }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `Request failed with status ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            if (result.candidates && result.candidates.length > 0) {
+                const recipes = JSON.parse(result.candidates[0].content.parts[0].text);
+                displayRecipes(recipes);
+            } else {
+                throw new Error('AI returned an empty or invalid response.');
+            }
+
+        } catch (error) {
+            console.error('Error generating recipes:', error);
+            showError(error.message || 'Failed to get a response. Please try again later.');
+        } finally {
+            setLoadingState(false);
+        }
     }
-}
 
-function showError(message) {
-    errorMessage.textContent = message;
-    errorModal.classList.remove('hidden');
-}
+    // --- UI Display Functions (these remain the same) ---
 
+    function displayRecipes(recipes) {
+        if (!recipes || recipes.length === 0) {
+            resultsDiv.innerHTML = `<p class="text-center text-gray-400">Sorry, we couldn't come up with any recipes from these ingredients. Try changing the set.</p>`;
+            return;
+        }
+        
+        recipes.forEach(recipe => {
+            const recipeCard = document.createElement('div');
+            recipeCard.className = 'bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700 recipe-card transform transition-all duration-300 hover:border-green-500 hover:scale-105';
+            
+            recipeCard.innerHTML = `
+                <h3 class="text-2xl font-bold text-green-400 mb-2">${recipe.name}</h3>
+                <p class="text-gray-400 mb-4">${recipe.description}</p>
+                <div class="flex items-center text-sm text-gray-500 mb-6">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>${recipe.time}</span>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-lg font-semibold mb-3 text-gray-200">Ingredients:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-gray-300">
+                            ${recipe.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold mb-3 text-gray-200">Instructions:</h4>
+                        <ol class="list-decimal list-inside space-y-2 text-gray-300">
+                            ${recipe.instructions.map(step => `<li>${step}</li>`).join('')}
+                        </ol>
+                    </div>
+                </div>
+            `;
+            resultsDiv.appendChild(recipeCard);
+        });
+    }
+
+    function setLoadingState(isLoading) {
+        if (isLoading) {
+            loader.classList.remove('hidden');
+            generateBtn.disabled = true;
+            buttonText.textContent = 'Generating...';
+            buttonIcon.classList.add('animate-spin');
+        } else {
+            loader.classList.add('hidden');
+            generateBtn.disabled = false;
+            buttonText.textContent = 'Find Recipes';
+            buttonIcon.classList.remove('animate-spin');
+        }
+    }
+
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorModal.classList.remove('hidden');
+    }
     </script>
 </body>
 </html>
+
 
 
 
