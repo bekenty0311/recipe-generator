@@ -43,13 +43,9 @@
             <!-- БЛОК С ЛОГОТИПОМ -->
             <div class="flex items-center gap-4 mb-4">
                 <svg class="w-16 h-16" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Колпак шеф-повара -->
                     <path d="M68.75 31.25C68.75 24.1789 63.0711 18.5 56 18.5C53.5341 18.5 51.2184 19.1641 49.25 20.3121C47.2816 19.1641 44.9659 18.5 42.5 18.5C35.4289 18.5 29.75 24.1789 29.75 31.25C29.75 35.8211 32.4189 39.7589 36.25 41.5V44H62.25V41.5C66.0811 39.7589 68.75 35.8211 68.75 31.25Z" fill="#34D399"/>
-                    <!-- Основа холодильника -->
                     <rect x="25" y="44" width="48.5" height="40" rx="4" fill="#4A5568"/>
-                    <!-- Дверца холодильника -->
                     <path d="M27 46H71.5V82C71.5 83.1046 70.6046 84 69.5 84H29C27.8954 84 27 83.1046 27 82V46Z" fill="#718096"/>
-                    <!-- Ручка холодильника -->
                     <rect x="62" y="58" width="4" height="12" rx="2" fill="#4A5568"/>
                 </svg>
                 <h1 class="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500">
@@ -161,8 +157,8 @@
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || `Request failed with status ${response.status}`);
+                const errorText = await response.text(); // Получаем текст ошибки для отладки
+                throw new Error(`Server responded with ${response.status}: ${errorText}`);
             }
 
             const result = await response.json();
@@ -171,12 +167,17 @@
                 const recipes = JSON.parse(result.candidates[0].content.parts[0].text);
                 displayRecipes(recipes);
             } else {
+                // Если в ответе нет 'candidates', возможно, это ошибка от Google AI
+                if(result.error) {
+                    throw new Error(`Google AI Error: ${result.error.message}`);
+                }
                 throw new Error('AI returned an empty or invalid response.');
             }
 
         } catch (error) {
             console.error('Error generating recipes:', error);
-            showError(error.message || 'Failed to get a response. Please try again later.');
+            // Показываем более детальную ошибку пользователю
+            showError(error.message);
         } finally {
             setLoadingState(false);
         }
@@ -239,6 +240,7 @@
     </script>
 </body>
 </html>
+
 
 
 
