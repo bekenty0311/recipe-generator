@@ -1,98 +1,50 @@
 // netlify/functions/generate-recipes.js
 
 exports.handler = async function (event, context) {
-  // Разрешаем запросы только с вашего сайта
-  const headers = {
-    'Access-Control-Allow-Origin': 'https://fridgechef.app',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Content-Type': 'application/json'
+  // Выводим в лог Netlify, что функция была вызвана
+  console.log("Function 'generate-recipes' was called.");
+  console.log("Request body:", event.body);
+
+  // Это тестовый ответ. Он не обращается к Google AI.
+  const testResponse = {
+    candidates: [
+      {
+        content: {
+          parts: [
+            {
+              text: JSON.stringify([
+                {
+                  name: "Test Recipe",
+                  description: "This is a test recipe to check if the function is working.",
+                  time: "5 minutes",
+                  ingredients: ["1x Test Ingredient", "1x Working Function"],
+                  instructions: ["1. Open the site.", "2. See this recipe.", "3. Confirm it works!"]
+                }
+              ])
+            }
+          ]
+        }
+      }
+    ]
   };
 
-  // Обработка предварительного запроса OPTIONS
-  if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({ message: 'Successful preflight call.' }),
-    };
-  }
-
-  // Проверяем, что это POST-запрос
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, headers, body: 'Method Not Allowed' };
-  }
-
   try {
-    // Получаем данные, отправленные с сайта (список ингредиентов)
-    const { ingredients, recipeCount } = JSON.parse(event.body);
-
-    // Получаем секретный API-ключ из переменных окружения Netlify
-    const apiKey = process.env.GEMINI_API_KEY;
-
-    if (!apiKey) {
-      throw new Error("API key is not set.");
-    }
-
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-
-    const prompt = `
-      Create ${recipeCount} different recipes from the following ingredients: ${ingredients}.
-      The recipes should be simple, easy to follow, and have step-by-step instructions.
-      For each recipe, specify the approximate cooking time.
-      Return the response as a JSON array.
-      Each object in the array must match the schema.
-    `;
-
-    const schema = {
-      type: "ARRAY",
-      items: {
-        type: "OBJECT",
-        properties: {
-          name: { type: "STRING" },
-          description: { type: "STRING" },
-          time: { type: "STRING" },
-          ingredients: { type: "ARRAY", items: { type: "STRING" } },
-          instructions: { type: "ARRAY", items: { type: "STRING" } }
-        },
-        required: ["name", "description", "time", "ingredients", "instructions"]
-      }
-    };
-
-    const payload = {
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-      generationConfig: {
-        responseMimeType: "application/json",
-        responseSchema: schema
-      }
-    };
-
-    // Отправляем запрос к Google AI
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    if (!response.ok) {
-      throw new Error(`Google API Error: ${response.statusText}`);
-    }
-
-    const result = await response.json();
-
-    // Отправляем успешный ответ обратно на сайт
+    // Отправляем успешный тестовый ответ
     return {
       statusCode: 200,
-      headers,
-      body: JSON.stringify(result)
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*' // Разрешаем запросы для теста
+      },
+      body: JSON.stringify(testResponse)
     };
 
   } catch (error) {
-    // Отправляем ошибку обратно на сайт
+    // Если даже здесь произойдет ошибка, мы ее запишем в лог
+    console.error("Error in test function:", error);
     return {
       statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: error.message })
+      body: JSON.stringify({ error: "Something went wrong in the test function." })
     };
   }
 };
