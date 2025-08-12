@@ -13,9 +13,6 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4712394184386891"
      crossorigin="anonymous"></script>
 
-    <!-- Код для запроса согласия (если Google его предоставил) -->
-    <!-- Убедитесь, что ваш второй код AdSense находится здесь -->
-
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Inter Font -->
@@ -120,9 +117,6 @@
     </div>
 
     <script>
-    // Весь ваш JavaScript код остается здесь без изменений
-    // ...
-    // Get DOM element references
     const recipeForm = document.getElementById('recipe-form');
     const ingredientsInput = document.getElementById('ingredients');
     const recipeCountSelect = document.getElementById('recipe-count');
@@ -135,7 +129,6 @@
     const errorMessage = document.getElementById('error-message');
     const closeModalBtn = document.getElementById('close-modal-btn');
 
-    // Handle form submission
     recipeForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const ingredients = ingredientsInput.value.trim();
@@ -148,21 +141,14 @@
         await generateRecipes(ingredients, recipeCount);
     });
 
-    // Close the error modal
     closeModalBtn.addEventListener('click', () => {
         errorModal.classList.add('hidden');
     });
 
-    /**
-     * Calls our secure serverless function to generate recipes
-     * @param {string} ingredients - The list of ingredients from the user
-     * @param {string} recipeCount - The number of recipes requested
-     */
     async function generateRecipes(ingredients, recipeCount) {
         setLoadingState(true);
         resultsDiv.innerHTML = '';
 
-        // URL нашей безопасной функции на Netlify
         const functionUrl = '/.netlify/functions/generate-recipes';
 
         try {
@@ -195,8 +181,6 @@
             setLoadingState(false);
         }
     }
-
-    // --- UI Display Functions (these remain the same) ---
 
     function displayRecipes(recipes) {
         if (!recipes || recipes.length === 0) {
@@ -255,7 +239,6 @@
     </script>
 </body>
 </html>
-```
 
 
 
