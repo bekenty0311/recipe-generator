@@ -5,8 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FridgeChef AI Recipe Generator</title>
 
+    <!-- ================== FAVICON ================== -->
+    <link rel="icon" type="image/png" href="favicon.png">
+    <!-- ============================================= -->
+
     <!-- Код Google AdSense для подтверждения сайта -->
-    <!-- Убедитесь, что ваш код AdSense находится здесь -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4712394184386891"
+     crossorigin="anonymous"></script>
 
     <!-- Код для запроса согласия (если Google его предоставил) -->
     <!-- Убедитесь, что ваш второй код AdSense находится здесь -->
@@ -28,13 +33,17 @@
             border-radius: 20px;
             border: 2px solid #2d3748;
         }
+        /* Стили для адаптивного рекламного блока */
+        .ad-container { width: 320px; height: 100px; }
+        @media(min-width: 500px) { .ad-container { width: 468px; height: 60px; } }
+        @media(min-width: 800px) { .ad-container { width: 728px; height: 90px; } }
     </style>
 </head>
 <body class="bg-gray-900 text-white antialiased">
 
     <div class="container mx-auto px-4 py-8 md:py-12">
         <header class="text-center mb-10 flex flex-col items-center">
-            <!-- НАЧАЛО: НОВЫЙ БЛОК С ЛОГОТИПОМ -->
+            <!-- БЛОК С ЛОГОТИПОМ -->
             <div class="flex items-center gap-4 mb-4">
                 <svg class="w-16 h-16" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <!-- Колпак шеф-повара -->
@@ -50,7 +59,6 @@
                     FridgeChef
                 </h1>
             </div>
-            <!-- КОНЕЦ: НОВЫЙ БЛОК С ЛОГОТИПОМ -->
             <p class="text-lg text-gray-400">What to cook with what's in your fridge?</p>
         </header>
 
@@ -75,9 +83,15 @@
                 </button>
             </form>
 
-            <!-- AdSense Placeholder -->
-            <div id="adsense-placeholder" class="my-8 text-center text-gray-500 bg-gray-800/50 p-4 rounded-lg">
-                <p>[ Your Ad Block Will Appear Here ]</p>
+            <!-- AdSense Ad Block -->
+            <div class="my-8 flex justify-center">
+                <ins class="adsbygoogle ad-container"
+                     style="display:inline-block"
+                     data-ad-client="ca-pub-4712394184386891"
+                     data-ad-slot="9958530238"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
             </div>
 
             <!-- Loading Indicator -->
@@ -241,6 +255,7 @@
     </script>
 </body>
 </html>
+```
 
 
 
