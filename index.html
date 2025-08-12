@@ -149,7 +149,7 @@
         setLoadingState(true);
         resultsDiv.innerHTML = '';
 
-        const functionUrl = '/api/generate-recipes';
+        const functionUrl = '/.netlify/functions/generate-recipes';
 
         try {
             const response = await fetch(functionUrl, {
@@ -239,6 +239,7 @@
     </script>
 </body>
 </html>
+
 
 
 
