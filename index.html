@@ -157,7 +157,7 @@
             });
 
             if (!response.ok) {
-                const errorText = await response.text(); // Получаем текст ошибки для отладки
+                const errorText = await response.text(); 
                 throw new Error(`Server responded with ${response.status}: ${errorText}`);
             }
 
@@ -167,7 +167,6 @@
                 const recipes = JSON.parse(result.candidates[0].content.parts[0].text);
                 displayRecipes(recipes);
             } else {
-                // Если в ответе нет 'candidates', возможно, это ошибка от Google AI
                 if(result.error) {
                     throw new Error(`Google AI Error: ${result.error.message}`);
                 }
@@ -176,7 +175,6 @@
 
         } catch (error) {
             console.error('Error generating recipes:', error);
-            // Показываем более детальную ошибку пользователю
             showError(error.message);
         } finally {
             setLoadingState(false);
@@ -240,6 +238,7 @@
     </script>
 </body>
 </html>
+
 
 
 
