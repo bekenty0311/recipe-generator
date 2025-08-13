@@ -8,7 +8,7 @@ exports.handler = async function (event) {
 
   try {
     const { ingredients, recipeCount } = JSON.parse(event.body);
-    const apiKey = process.env.GEMINI_API_KEY;
+   const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
       return { statusCode: 500, body: JSON.stringify({ error: "API key is not configured." }) };
