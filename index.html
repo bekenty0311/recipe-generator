@@ -1,98 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FridgeChef AI Recipe Generator</title>
+    <title>FridgeChef AI - Генератор рецептов из продуктов в холодильнике</title>
+    <meta name="description" content="Не знаете, что приготовить? Введите продукты, которые у вас есть, и наш искусственный интеллект создаст для вас уникальные рецепты за секунды!">
 
     <!-- ================== FAVICON ================== -->
     <link rel="icon" type="image/png" href="favicon.png">
     <!-- ============================================= -->
 
-    <!-- Код Google AdSense для подтверждения сайта -->
+    <!-- Код Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4712394184386891"
      crossorigin="anonymous"></script>
 
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+        body { font-family: 'Inter', sans-serif; }
         .recipe-card::-webkit-scrollbar { width: 8px; }
         .recipe-card::-webkit-scrollbar-track { background: #2d3748; }
-        .recipe-card::-webkit-scrollbar-thumb {
-            background-color: #4a5568;
-            border-radius: 20px;
-            border: 2px solid #2d3748;
-        }
+        .recipe-card::-webkit-scrollbar-thumb { background-color: #4a5568; border-radius: 20px; border: 2px solid #2d3748; }
+        
         /* Стили для адаптивного рекламного блока */
-        .ad-container { width: 320px; height: 50px; } /* Уменьшил высоту для мобильных */
+        .ad-container { width: 320px; height: 50px; }
         @media(min-width: 500px) { .ad-container { width: 468px; height: 60px; } }
         @media(min-width: 800px) { .ad-container { width: 728px; height: 90px; } }
 
-        /* НОВЫЕ СТИЛИ ДЛЯ ЗАКРЕПЛЕННОГО БАННЕРА */
+        /* Стили для закрепленного баннера */
         .sticky-ad-banner {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background-color: #111827; /* Темный фон, как у шапки */
+            background-color: #111827;
             padding: 8px 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.5); /* Тень для отделения */
-            z-index: 50; /* Чтобы был поверх всего */
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.5);
+            z-index: 50;
+        }
+        /* Дополнительный отступ для основного контента, чтобы футер и реклама не перекрывали его */
+        .content-wrapper {
+             padding-bottom: 180px; /* Увеличено для футера и рекламы */
         }
     </style>
 </head>
 <body class="bg-gray-900 text-white antialiased">
 
-    <!-- Добавлен нижний отступ (pb-40), чтобы контент не прятался за рекламу -->
-    <div class="container mx-auto px-4 py-8 md:py-12 pb-40">
+    <div class="container mx-auto px-4 py-8 md:py-12 content-wrapper">
         <header class="text-center mb-10 flex flex-col items-center">
-            <!-- БЛОК С ЛОГОТИПОМ -->
             <div class="flex items-center gap-4 mb-4">
-                <svg class="w-16 h-16" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M68.75 31.25C68.75 24.1789 63.0711 18.5 56 18.5C53.5341 18.5 51.2184 19.1641 49.25 20.3121C47.2816 19.1641 44.9659 18.5 42.5 18.5C35.4289 18.5 29.75 24.1789 29.75 31.25C29.75 35.8211 32.4189 39.7589 36.25 41.5V44H62.25V41.5C66.0811 39.7589 68.75 35.8211 68.75 31.25Z" fill="#34D399"/>
-                    <rect x="25" y="44" width="48.5" height="40" rx="4" fill="#4A5568"/>
-                    <path d="M27 46H71.5V82C71.5 83.1046 70.6046 84 69.5 84H29C27.8954 84 27 83.1046 27 82V46Z" fill="#718096"/>
-                    <rect x="62" y="58" width="4" height="12" rx="2" fill="#4A5568"/>
-                </svg>
-                <h1 class="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500">
-                    FridgeChef
-                </h1>
+                <svg class="w-16 h-16" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M68.75 31.25C68.75 24.1789 63.0711 18.5 56 18.5C53.5341 18.5 51.2184 19.1641 49.25 20.3121C47.2816 19.1641 44.9659 18.5 42.5 18.5C35.4289 18.5 29.75 24.1789 29.75 31.25C29.75 35.8211 32.4189 39.7589 36.25 41.5V44H62.25V41.5C66.0811 39.7589 68.75 35.8211 68.75 31.25Z" fill="#34D399"/><rect x="25" y="44" width="48.5" height="40" rx="4" fill="#4A5568"/><path d="M27 46H71.5V82C71.5 83.1046 70.6046 84 69.5 84H29C27.8954 84 27 83.1046 27 82V46Z" fill="#718096"/><rect x="62" y="58" width="4" height="12" rx="2" fill="#4A5568"/></svg>
+                <h1 class="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500">FridgeChef</h1>
             </div>
-            <p class="text-lg text-gray-400">What to cook with what's in your fridge?</p>
+            <p class="text-lg text-gray-400">Что приготовить из того, что есть в холодильнике?</p>
         </header>
 
         <main class="max-w-2xl mx-auto">
             <!-- Форма для ввода ингредиентов -->
-            <form id="recipe-form" class="bg-gray-800 p-6 rounded-2xl shadow-lg">
+            <form id="recipe-form" class="bg-gray-800 p-6 rounded-2xl shadow-lg mb-12">
                 <div class="mb-4">
-                    <label for="ingredients" class="block mb-2 text-sm font-medium text-gray-300">Enter your ingredients, separated by commas:</label>
-                    <textarea id="ingredients" rows="4" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200 text-white placeholder-gray-400" placeholder="e.g., chicken breast, potatoes, tomatoes, onion, sour cream..."></textarea>
+                    <label for="ingredients" class="block mb-2 text-sm font-medium text-gray-300">Введите ваши ингредиенты через запятую:</label>
+                    <textarea id="ingredients" rows="4" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200 text-white placeholder-gray-400" placeholder="например, куриная грудка, картофель, помидоры, лук, сметана..."></textarea>
                 </div>
                 <div class="mb-6">
-                    <label for="recipe-count" class="block mb-2 text-sm font-medium text-gray-300">How many recipes to generate?</label>
+                    <label for="recipe-count" class="block mb-2 text-sm font-medium text-gray-300">Сколько рецептов сгенерировать?</label>
                     <select id="recipe-count" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200 text-white">
-                        <option value="1">1 recipe</option>
-                        <option value="2" selected>2 recipes</option>
-                        <option value="3">3 recipes</option>
+                        <option value="1">1 рецепт</option>
+                        <option value="2" selected>2 рецепта</option>
+                        <option value="3">3 рецепта</option>
                     </select>
                 </div>
                 <button type="submit" id="generate-btn" class="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
                     <svg id="button-icon" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
-                    <span id="button-text">Find Recipes</span>
+                    <span id="button-text">Найти рецепты</span>
                 </button>
             </form>
 
-            <!-- РЕКЛАМНЫЙ БЛОК БЫЛ УДАЛЕН ОТСЮДА -->
+            <!-- ================================================== -->
+            <!-- ========= НОВЫЙ СТАТИЧЕСКИЙ КОНТЕНТ ========= -->
+            <!-- ================================================== -->
+
+            <!-- Секция "Как это работает?" -->
+            <section id="how-it-works" class="mb-12">
+                <h2 class="text-3xl font-bold text-center mb-6 text-green-400">Как это работает?</h2>
+                <div class="grid md:grid-cols-3 gap-8 text-center">
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <div class="text-3xl mb-2">1.</div>
+                        <h3 class="text-xl font-semibold mb-2">Введите продукты</h3>
+                        <p class="text-gray-400">Перечислите все, что нашли в своем холодильнике, через запятую.</p>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <div class="text-3xl mb-2">2.</div>
+                        <h3 class="text-xl font-semibold mb-2">Нажмите кнопку</h3>
+                        <p class="text-gray-400">Наш ИИ проанализирует список и подберет лучшие сочетания.</p>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <div class="text-3xl mb-2">3.</div>
+                        <h3 class="text-xl font-semibold mb-2">Получите рецепты</h3>
+                        <p class="text-gray-400">Наслаждайтесь пошаговыми инструкциями для вкусных блюд.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция "О сервисе" -->
+            <section id="about" class="mb-12 bg-gray-800 p-6 rounded-2xl">
+                <h2 class="text-3xl font-bold text-center mb-4 text-green-400">Готовьте с умом, а не с трудом</h2>
+                <p class="text-gray-400 text-center max-w-xl mx-auto">
+                    FridgeChef — это ваш личный помощник на кухне, который использует мощь искусственного интеллекта, чтобы превратить остатки продуктов в кулинарные шедевры. Забудьте о мучительном вопросе "что приготовить?" и сократите количество пищевых отходов. Наша миссия — сделать домашнюю готовку простой, креативной и экономной.
+                </p>
+            </section>
+            
+            <!-- Секция "Пример рецепта" -->
+            <section id="example-recipe" class="mb-12">
+                 <h2 class="text-3xl font-bold text-center mb-6 text-green-400">Пример рецепта</h2>
+                 <div class="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700">
+                    <h3 class="text-2xl font-bold text-green-400 mb-2">Сливочная паста с курицей и грибами</h3>
+                    <p class="text-gray-400 mb-4">Простое, но элегантное блюдо, которое идеально подходит для быстрого ужина в будний день.</p>
+                    <div class="flex items-center text-sm text-gray-500 mb-6">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>Примерно 25 минут</span>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 text-gray-200">Ингредиенты:</h4>
+                            <ul class="list-disc list-inside space-y-1 text-gray-300">
+                                <li>Паста (любого вида) - 200 г</li>
+                                <li>Куриное филе - 1 шт.</li>
+                                <li>Шампиньоны - 150 г</li>
+                                <li>Сливки (20%) - 200 мл</li>
+                                <li>Лук - 1 шт.</li>
+                                <li>Чеснок - 2 зубчика</li>
+                                <li>Растительное масло, соль, перец</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 text-gray-200">Инструкции:</h4>
+                            <ol class="list-decimal list-inside space-y-2 text-gray-300">
+                                <li>Отварите пасту согласно инструкции на упаковке.</li>
+                                <li>Нарежьте курицу, грибы и лук. Обжарьте на сковороде до золотистого цвета.</li>
+                                <li>Добавьте измельченный чеснок, залейте сливками, посолите и поперчите.</li>
+                                <li>Тушите соус 5-7 минут до загустения.</li>
+                                <li>Смешайте готовую пасту с соусом и подавайте.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================================================== -->
+            <!-- ========= КОНЕЦ НОВОГО КОНТЕНТА ================= -->
+            <!-- ================================================== -->
 
             <!-- Loading Indicator -->
             <div id="loader" class="hidden text-center py-10">
@@ -101,7 +164,7 @@
                         <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
                         <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
                     </svg>
-                    <p class="mt-4 text-gray-400">AI is crafting your recipes...</p>
+                    <p class="mt-4 text-gray-400">ИИ создает ваши рецепты...</p>
                 </div>
             </div>
 
@@ -111,15 +174,28 @@
             <!-- Error Modal -->
             <div id="error-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
                 <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-11/12 max-w-md text-center border border-red-500">
-                    <h3 class="text-xl font-bold text-red-400 mb-4">An Error Occurred</h3>
-                    <p id="error-message" class="text-gray-300 mb-6">Failed to generate recipes. Please try again.</p>
-                    <button id="close-modal-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg transition-colors">Close</button>
+                    <h3 class="text-xl font-bold text-red-400 mb-4">Произошла ошибка</h3>
+                    <p id="error-message" class="text-gray-300 mb-6">Не удалось сгенерировать рецепты. Пожалуйста, попробуйте еще раз.</p>
+                    <button id="close-modal-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg transition-colors">Закрыть</button>
                 </div>
             </div>
         </main>
     </div>
+    
+    <!-- НОВЫЙ ФУТЕР (НИЖНИЙ КОЛОНТИТУЛ) -->
+    <footer class="absolute bottom-0 left-0 w-full bg-gray-800 text-gray-400 text-center p-4" style="z-index: 40;">
+        <div class="container mx-auto">
+            <p>&copy; 2024 FridgeChef. Все права защищены.</p>
+            <nav class="mt-2">
+                <!-- ЗАГЛУШКИ ДЛЯ БУДУЩИХ СТРАНИЦ -->
+                <a href="#" class="hover:text-white mx-2">Политика конфиденциальности</a>
+                <a href="#" class="hover:text-white mx-2">О нас</a>
+            </nav>
+        </div>
+    </footer>
 
-    <!-- НОВЫЙ БЛОК ДЛЯ ЗАКРЕПЛЕННОЙ РЕКЛАМЫ -->
+
+    <!-- Закрепленный рекламный баннер -->
     <div class="sticky-ad-banner">
         <ins class="adsbygoogle ad-container"
              style="display:inline-block"
@@ -131,139 +207,130 @@
     </div>
 
     <script>
-    // Весь ваш JavaScript код остается здесь без изменений
-    // ...
-    const recipeForm = document.getElementById('recipe-form');
-    const ingredientsInput = document.getElementById('ingredients');
-    const recipeCountSelect = document.getElementById('recipe-count');
-    const generateBtn = document.getElementById('generate-btn');
-    const buttonText = document.getElementById('button-text');
-    const buttonIcon = document.getElementById('button-icon');
-    const loader = document.getElementById('loader');
-    const resultsDiv = document.getElementById('results');
-    const errorModal = document.getElementById('error-modal');
-    const errorMessage = document.getElementById('error-message');
-    const closeModalBtn = document.getElementById('close-modal-btn');
+        const recipeForm = document.getElementById('recipe-form');
+        const ingredientsInput = document.getElementById('ingredients');
+        const recipeCountSelect = document.getElementById('recipe-count');
+        const generateBtn = document.getElementById('generate-btn');
+        const buttonText = document.getElementById('button-text');
+        const buttonIcon = document.getElementById('button-icon');
+        const loader = document.getElementById('loader');
+        const resultsDiv = document.getElementById('results');
+        const errorModal = document.getElementById('error-modal');
+        const errorMessage = document.getElementById('error-message');
+        const closeModalBtn = document.getElementById('close-modal-btn');
 
-    recipeForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const ingredients = ingredientsInput.value.trim();
-        if (!ingredients) {
-            showError('Please enter at least one ingredient.');
-            return;
-        }
-        
-        const recipeCount = recipeCountSelect.value;
-        await generateRecipes(ingredients, recipeCount);
-    });
-
-    closeModalBtn.addEventListener('click', () => {
-        errorModal.classList.add('hidden');
-    });
-
-    async function generateRecipes(ingredients, recipeCount) {
-        setLoadingState(true);
-        resultsDiv.innerHTML = '';
-
-        const functionUrl = '/.netlify/functions/generate-recipes';
-
-        try {
-            const response = await fetch(functionUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ ingredients, recipeCount }),
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text(); 
-                throw new Error(`Server responded with ${response.status}: ${errorText}`);
+        recipeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const ingredients = ingredientsInput.value.trim();
+            if (!ingredients) {
+                showError('Пожалуйста, введите хотя бы один ингредиент.');
+                return;
             }
-
-            const result = await response.json();
-
-            if (result.candidates && result.candidates.length > 0) {
-                const recipes = JSON.parse(result.candidates[0].content.parts[0].text);
-                displayRecipes(recipes);
-            } else {
-                if(result.error) {
-                    throw new Error(`Google AI Error: ${result.error.message}`);
-                }
-                throw new Error('AI returned an empty or invalid response.');
-            }
-
-        } catch (error) {
-            console.error('Error generating recipes:', error);
-            showError(error.message);
-        } finally {
-            setLoadingState(false);
-        }
-    }
-
-    function displayRecipes(recipes) {
-        if (!recipes || recipes.length === 0) {
-            resultsDiv.innerHTML = `<p class="text-center text-gray-400">Sorry, we couldn't come up with any recipes from these ingredients. Try changing the set.</p>`;
-            return;
-        }
-        
-        recipes.forEach(recipe => {
-            const recipeCard = document.createElement('div');
-            recipeCard.className = 'bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700 recipe-card transform transition-all duration-300 hover:border-green-500 hover:scale-105';
             
-            recipeCard.innerHTML = `
-                <h3 class="text-2xl font-bold text-green-400 mb-2">${recipe.name}</h3>
-                <p class="text-gray-400 mb-4">${recipe.description}</p>
-                <div class="flex items-center text-sm text-gray-500 mb-6">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span>${recipe.time}</span>
-                </div>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <h4 class="text-lg font-semibold mb-3 text-gray-200">Ingredients:</h4>
-                        <ul class="list-disc list-inside space-y-1 text-gray-300">
-                            ${recipe.ingredients.map(ing => `<li>${ing}</li>`).join('')}
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold mb-3 text-gray-200">Instructions:</h4>
-                        <ol class="list-decimal list-inside space-y-2 text-gray-300">
-                            ${recipe.instructions.map(step => `<li>${step}</li>`).join('')}
-                        </ol>
-                    </div>
-                </div>
-            `;
-            resultsDiv.appendChild(recipeCard);
+            const recipeCount = recipeCountSelect.value;
+            await generateRecipes(ingredients, recipeCount);
         });
-    }
 
-    function setLoadingState(isLoading) {
-        if (isLoading) {
-            loader.classList.remove('hidden');
-            generateBtn.disabled = true;
-            buttonText.textContent = 'Generating...';
-            buttonIcon.classList.add('animate-spin');
-        } else {
-            loader.classList.add('hidden');
-            generateBtn.disabled = false;
-            buttonText.textContent = 'Find Recipes';
-            buttonIcon.classList.remove('animate-spin');
+        closeModalBtn.addEventListener('click', () => {
+            errorModal.classList.add('hidden');
+        });
+
+        async function generateRecipes(ingredients, recipeCount) {
+            setLoadingState(true);
+            resultsDiv.innerHTML = '';
+
+            // Плавная прокрутка к началу результатов
+            const resultsSection = document.getElementById('results');
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            const functionUrl = '/.netlify/functions/generate-recipes';
+
+            try {
+                const response = await fetch(functionUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ingredients, recipeCount }),
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text(); 
+                    throw new Error(`Сервер ответил с ошибкой ${response.status}: ${errorText}`);
+                }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0) {
+                    const recipes = JSON.parse(result.candidates[0].content.parts[0].text);
+                    displayRecipes(recipes);
+                } else {
+                    if(result.error) {
+                        throw new Error(`Ошибка Google AI: ${result.error.message}`);
+                    }
+                    throw new Error('ИИ вернул пустой или неверный ответ.');
+                }
+
+            } catch (error) {
+                console.error('Ошибка при генерации рецептов:', error);
+                showError(error.message);
+            } finally {
+                setLoadingState(false);
+            }
         }
-    }
 
-    function showError(message) {
-        errorMessage.textContent = message;
-        errorModal.classList.remove('hidden');
-    }
+        function displayRecipes(recipes) {
+            if (!recipes || recipes.length === 0) {
+                resultsDiv.innerHTML = `<p class="text-center text-gray-400">К сожалению, мы не смогли придумать рецепты из этих ингредиентов. Попробуйте изменить набор.</p>`;
+                return;
+            }
+            
+            recipes.forEach(recipe => {
+                const recipeCard = document.createElement('div');
+                recipeCard.className = 'bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700 recipe-card transform transition-all duration-300 hover:border-green-500 hover:scale-105';
+                
+                recipeCard.innerHTML = `
+                    <h3 class="text-2xl font-bold text-green-400 mb-2">${recipe.name}</h3>
+                    <p class="text-gray-400 mb-4">${recipe.description}</p>
+                    <div class="flex items-center text-sm text-gray-500 mb-6">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>${recipe.time}</span>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 text-gray-200">Ингредиенты:</h4>
+                            <ul class="list-disc list-inside space-y-1 text-gray-300">
+                                ${recipe.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 text-gray-200">Инструкции:</h4>
+                            <ol class="list-decimal list-inside space-y-2 text-gray-300">
+                                ${recipe.instructions.map(step => `<li>${step}</li>`).join('')}
+                            </ol>
+                        </div>
+                    </div>
+                `;
+                resultsDiv.appendChild(recipeCard);
+            });
+        }
+
+        function setLoadingState(isLoading) {
+            if (isLoading) {
+                loader.classList.remove('hidden');
+                generateBtn.disabled = true;
+                buttonText.textContent = 'Генерация...';
+                buttonIcon.classList.add('animate-spin');
+            } else {
+                loader.classList.add('hidden');
+                generateBtn.disabled = false;
+                buttonText.textContent = 'Найти рецепты';
+                buttonIcon.classList.remove('animate-spin');
+            }
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorModal.classList.remove('hidden');
+        }
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
