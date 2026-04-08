@@ -18,15 +18,15 @@ exports.handler = async (event) => {
     }
 
     /**
-     * Используем новую модель gemini-3.1-flash.
-     * Эта модель обеспечивает высокую скорость генерации и точность при создании JSON-ответов.
+     * Используем gemini-1.5-flash — это самая стабильная и быстрая модель.
+     * Она гарантированно работает с API v1beta.
      */
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash:generateContent?key=${apiKey}`;
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     const systemPrompt = `You are a professional chef. Generate exactly ${recipeCount} creative recipes using these ingredients: ${ingredients}. 
     Response MUST be a valid JSON array of objects. 
     Each object structure: {"name": "Recipe Name", "description": "Short summary", "time": "Cooking time", "ingredients": ["item 1", "item 2"], "instructions": ["step 1", "step 2"]}.
-    Do not include any markdown formatting or triple backticks. Return ONLY the JSON.`;
+    IMPORTANT: Return ONLY the JSON array. No markdown, no backticks, no extra text.`;
 
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -44,6 +44,11 @@ exports.handler = async (event) => {
         statusCode: response.status, 
         body: JSON.stringify(data) 
       };
+    }
+
+    // Проверяем наличие текста в ответе
+    if (!data.candidates || !data.candidates[0].content.parts[0].text) {
+      throw new Error("AI returned empty content");
     }
 
     return {
