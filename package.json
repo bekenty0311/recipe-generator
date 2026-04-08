@@ -1,4 +1,11 @@
 {
-  "name": "fridgechef-app",
-  "version": "1.0.0"
+  "name": "recipe-generator",
+  "version": "1.0.0",
+  "description": "AI Recipe Generator",
+  "main": "index.html",
+  "dependencies": {
+    "node-fetch": "^2.7.0"
+  },
+  "author": "",
+  "license": "ISC"
 }
