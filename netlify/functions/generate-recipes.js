@@ -1,77 +1,59 @@
-// netlify/functions/generate-recipes.js
+const fetch = require('node-fetch');
 
-exports.handler = async function (event) {
-  // Проверяем, что это POST-запрос, иначе выходим
+exports.handler = async (event) => {
+  // Разрешаем только POST запросы
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
   try {
     const { ingredients, recipeCount } = JSON.parse(event.body);
-   const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      return { statusCode: 500, body: JSON.stringify({ error: "API key is not configured." }) };
+      return { 
+        statusCode: 500, 
+        body: JSON.stringify({ error: { message: 'API key is not configured in Netlify environment variables.' } }) 
+      };
     }
 
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+    // Используем актуальную модель gemini-2.5-flash-preview-09-2025
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
-    const prompt = `
-      Create ${recipeCount} different recipes from the following ingredients: ${ingredients}.
-      The recipes should be simple, easy to follow, and have step-by-step instructions.
-      For each recipe, specify the approximate cooking time.
-      Return the response as a JSON array.
-      Each object in the array must match the schema.
-    `;
-    
-    const schema = {
-      type: "ARRAY",
-      items: {
-        type: "OBJECT",
-        properties: {
-          name: { type: "STRING" },
-          description: { type: "STRING" },
-          time: { type: "STRING" },
-          ingredients: { type: "ARRAY", items: { type: "STRING" } },
-          instructions: { type: "ARRAY", items: { type: "STRING" } }
-        },
-        required: ["name", "description", "time", "ingredients", "instructions"]
-      }
-    };
-
-    const payload = {
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-      generationConfig: {
-        responseMimeType: "application/json",
-        responseSchema: schema
-      }
-    };
+    const systemPrompt = `You are an expert chef. Generate ${recipeCount} creative and delicious recipes based ONLY on the following ingredients: ${ingredients}. 
+    Return the response as a valid JSON array of objects. 
+    Each object must have: "name", "description", "time", "ingredients" (array of strings), and "instructions" (array of strings). 
+    Do not include any extra text or markdown backticks outside of the JSON array.`;
 
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: systemPrompt }] }]
+      })
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      const errorBody = await response.text();
-      console.error("Google API Error:", errorBody);
-      return { statusCode: response.status, body: JSON.stringify({ error: `Google API Error: ${errorBody}` }) };
+      console.error('Google API Error:', data);
+      return { 
+        statusCode: response.status, 
+        body: JSON.stringify(data) 
+      };
     }
 
-    const result = await response.json();
-    
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(result)
+      body: JSON.stringify(data)
     };
 
   } catch (error) {
-    console.error("Function Error:", error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message })
+    console.error('Server Error:', error);
+    return { 
+      statusCode: 500, 
+      body: JSON.stringify({ error: { message: error.message } }) 
     };
   }
 };
